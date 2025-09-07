@@ -15,6 +15,7 @@ import { StockChart } from "./stock-chart"
 import { StockList } from "./stock-list"
 import { TechnicalIndicators } from "./technical-indicators"
 import { Search, Filter } from "lucide-react"
+import Chat from "./chat"
 
 export function MarketsPage() {
   const [selectedStock, setSelectedStock] = useState("AAPL")
@@ -59,6 +60,7 @@ export function MarketsPage() {
             selectedStock={selectedStock}
             onSelectStock={setSelectedStock}
           />
+          <Chat className="" />
         </div>
 
         {/* Chart and Analysis */}

@@ -58,7 +58,6 @@ const navigationItems: Record<Tab, { id: Tab; label: string; icon: any }> = {
 
 export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const { activeTab, setActiveTab } = useContext(SidebarContext)
-  console.log(Object.values(navigationItems))
 
   return (
     <div

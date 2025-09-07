@@ -13,10 +13,11 @@ import { AuthProvider } from "@/contexts/auth-context"
 import { MarketDataProvider } from "@/contexts/market-data-context"
 import { TradingJournalProvider } from "@/contexts/trading-journal-context"
 import { SidebarContext, Tab } from "../contexts/sidebar-context"
+import { NewsProvider } from "../contexts/news-context"
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const { activeTab, setActiveTab } = useContext(SidebarContext)
+  const { activeTab } = useContext(SidebarContext)
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -39,25 +40,27 @@ export default function Home() {
 
   return (
     <AuthProvider>
-      <MarketDataProvider>
-        <TradingJournalProvider>
-          <div className="flex h-screen bg-background text-foreground">
-            <Sidebar
-              isOpen={sidebarOpen}
-              onToggle={() => setSidebarOpen(!sidebarOpen)}
-            />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <TopBar
-                onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
-                sidebarOpen={sidebarOpen}
+      <NewsProvider>
+        <MarketDataProvider>
+          <TradingJournalProvider>
+            <div className="flex h-screen bg-background text-foreground">
+              <Sidebar
+                isOpen={sidebarOpen}
+                onToggle={() => setSidebarOpen(!sidebarOpen)}
               />
-              <main className="flex-1 overflow-auto bg-background">
-                {renderActiveTab()}
-              </main>
+              <div className="flex-1 flex flex-col overflow-hidden">
+                <TopBar
+                  onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
+                  sidebarOpen={sidebarOpen}
+                />
+                <main className="flex-1 overflow-auto bg-background">
+                  {renderActiveTab()}
+                </main>
+              </div>
             </div>
-          </div>
-        </TradingJournalProvider>
-      </MarketDataProvider>
+          </TradingJournalProvider>
+        </MarketDataProvider>
+      </NewsProvider>
     </AuthProvider>
   )
 }

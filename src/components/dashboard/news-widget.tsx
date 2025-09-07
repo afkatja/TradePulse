@@ -13,7 +13,7 @@ import { ExternalLink, TrendingUp, TrendingDown, Minus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useContext } from "react"
 import { SidebarContext, Tab } from "../../contexts/sidebar-context"
-import { set } from "react-hook-form"
+import { useNews } from "../../contexts/news-context"
 
 const mockNews = [
   {
@@ -69,6 +69,8 @@ export function NewsWidget() {
     }
   }
 
+  const { news } = useNews()
+
   return (
     <Card className="h-fit">
       <CardHeader>
@@ -87,14 +89,14 @@ export function NewsWidget() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {mockNews.map(article => (
+        {news.map(article => (
           <div
-            key={article.id}
+            key={article.source.id}
             className="space-y-2 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
           >
             <div className="flex items-start justify-between">
               <h4 className="text-sm font-medium leading-tight line-clamp-2">
-                {article.headline}
+                {article.title}
               </h4>
               <Button
                 variant="ghost"
@@ -108,11 +110,11 @@ export function NewsWidget() {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <span className="text-xs text-muted-foreground">
-                  {article.source}
+                  {article.source.name}
                 </span>
                 <span className="text-xs text-muted-foreground">•</span>
                 <span className="text-xs text-muted-foreground">
-                  {article.timestamp}
+                  {article.publishedAt}
                 </span>
               </div>
 

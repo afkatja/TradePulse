@@ -151,24 +151,26 @@ export function StockChart({ symbol }: StockChartProps) {
                 formatter={(value: number) => [`$${value.toFixed(2)}`, "Price"]}
                 labelFormatter={label => new Date(label).toLocaleDateString()}
                 contentStyle={{
-                  backgroundColor: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
+                  backgroundColor: "oklch(var(--card))",
+                  border: "1px solid oklch(var(--border))",
                   borderRadius: "8px",
+                  color: "oklch(var(--card-foreground))",
+                  fontSize: "0.875rem",
                 }}
               />
               <Line
                 type="monotone"
                 dataKey="price"
                 stroke={
-                  isPositive ? "hsl(var(--bullish))" : "hsl(var(--bearish))"
+                  isPositive ? "oklch(var(--bullish))" : "oklch(var(--bearish))"
                 }
                 strokeWidth={2}
                 dot={false}
                 activeDot={{
                   r: 4,
                   fill: isPositive
-                    ? "hsl(var(--bullish))"
-                    : "hsl(var(--bearish))",
+                    ? "oklch(var(--bullish))"
+                    : "oklch(var(--bearish))",
                 }}
               />
             </LineChart>

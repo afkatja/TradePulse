@@ -17,16 +17,16 @@
   --popover-foreground: 0.9838 0.0036 248.23;
   --primary: 0.6261 0.186 259.6;
   --primary-foreground: 0.1371 0.036 258.53;
-  --secondary: 0.28 0.037 259.98;
+  --secondary: 0.24 0.042 260; /* Slightly darker and more saturated than old value */
   --secondary-foreground: 0.9838 0.0036 248.23;
-  --muted: 0.28 0.037 259.98;
+  --muted: 0.32 0.028 258; /* Lighter with less chroma for subtlety */
   --muted-foreground: 0.7107 0.0351 256.8;
-  --accent: 0.28 0.037 259.98;
+  --accent: 0.35 0.055 262; /* Brighter accent with more chroma */
   --accent-foreground: 0.9838 0.0036 248.23;
   --destructive: 0.396 0.1331 25.71;
   --destructive-foreground: 0.9838 0.0036 248.23;
-  --border: 0.28 0.037 259.98;
-  --input: 0.28 0.037 259.98;
+  --border: 0.26 0.032 259; /* Darker border for definition */
+  --input: 0.22 0.038 261; /* Darker input background */
   --ring: 0.6232 0.188 259.8;
   --chart-1: 0.5292 0.1931 262.14;
   --chart-2: 0.6983 0.1337 165.49;
@@ -39,6 +39,10 @@
   --danger-foreground: 0.9818 0.0043 16.25;
   --warning: 0.8601 0.173 91.84;
   --warning-foreground: 0.2854 0.0638 53.81;
+
+  --bullish: 0.57 0.15 142; /* was hsl(142 76% 36%) */
+  --bearish: 0.69 0.2 29; /* was hsl(0 84% 60%) */
+  --neutral: 0.71 0.03 249; /* was hsl(215 20% 65%) */
 
   --radius: 0.75rem;
 
@@ -130,6 +134,9 @@
 }
 @utility bg-muted {
   background-color: oklch(var(--muted) / var(--bg-opacity, 1));
+}
+@utility stroke-muted {
+  stroke: oklch(var(--muted));
 }
 @utility bg-background {
   background-color: oklch(var(--background) / var(--bg-opacity, 1));
