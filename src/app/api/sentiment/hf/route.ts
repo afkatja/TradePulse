@@ -16,5 +16,6 @@ export async function POST(req: Request) {
   )
 
   const result = await response.json()
-  return NextResponse.json(result[0])
+
+  return NextResponse.json(result[0][0])
 }

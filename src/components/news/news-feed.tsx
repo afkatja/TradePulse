@@ -17,87 +17,12 @@ import {
   Clock,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
+import { useNews } from "../../contexts/news-context"
 
-interface NewsFeedProps {
-  filter: string
-  searchQuery: string
-}
+export function NewsFeed() {
+  const { news, isLoading, query, currentCategory } = useNews()
 
-const mockNewsArticles = [
-  {
-    id: "1",
-    headline:
-      "Federal Reserve Signals Potential Interest Rate Cuts in Second Quarter",
-    summary:
-      "Fed officials hint at monetary policy easing as inflation shows signs of cooling...",
-    source: "Reuters",
-    timestamp: "2 hours ago",
-    sentiment: "bullish" as const,
-    sentimentScore: 0.75,
-    impact: "high",
-    category: "monetary-policy",
-    relatedStocks: ["SPY", "QQQ", "IWM"],
-    breaking: true,
-  },
-  {
-    id: "2",
-    headline: "Apple Reports Record Q4 Revenue Despite Supply Chain Challenges",
-    summary:
-      "Tech giant exceeds analyst expectations with strong iPhone and services growth...",
-    source: "Bloomberg",
-    timestamp: "3 hours ago",
-    sentiment: "bullish" as const,
-    sentimentScore: 0.68,
-    impact: "medium",
-    category: "earnings",
-    relatedStocks: ["AAPL"],
-    breaking: false,
-  },
-  {
-    id: "3",
-    headline: "Energy Sector Faces Headwinds as Oil Prices Decline",
-    summary:
-      "Crude oil futures drop 3% following unexpected inventory build and demand concerns...",
-    source: "MarketWatch",
-    timestamp: "4 hours ago",
-    sentiment: "bearish" as const,
-    sentimentScore: -0.55,
-    impact: "medium",
-    category: "commodities",
-    relatedStocks: ["XOM", "CVX", "COP"],
-    breaking: false,
-  },
-  {
-    id: "4",
-    headline: "Congressional Committee Advances Tech Regulation Bill",
-    summary:
-      "New legislation targeting big tech companies moves forward in House committee...",
-    source: "The Wall Street Journal",
-    timestamp: "5 hours ago",
-    sentiment: "bearish" as const,
-    sentimentScore: -0.42,
-    impact: "high",
-    category: "political",
-    relatedStocks: ["GOOGL", "META", "AMZN"],
-    breaking: false,
-  },
-  {
-    id: "5",
-    headline: "Electric Vehicle Sales Surge 45% Year-over-Year",
-    summary:
-      "EV adoption accelerates as charging infrastructure expands nationwide...",
-    source: "TechCrunch",
-    timestamp: "6 hours ago",
-    sentiment: "bullish" as const,
-    sentimentScore: 0.62,
-    impact: "medium",
-    category: "technology",
-    relatedStocks: ["TSLA", "RIVN", "LCID"],
-    breaking: false,
-  },
-]
-
-export function NewsFeed({ filter, searchQuery }: NewsFeedProps) {
   const getSentimentIcon = (sentiment: string) => {
     switch (sentiment) {
       case "bullish":
@@ -131,104 +56,136 @@ export function NewsFeed({ filter, searchQuery }: NewsFeedProps) {
     }
   }
 
-  const filteredArticles = mockNewsArticles.filter(article => {
-    const matchesSearch =
-      article.headline.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.summary.toLowerCase().includes(searchQuery.toLowerCase())
+  if (isLoading) {
+    return (
+      <div className="space-y-4 transition-opacity duration-500">
+        {[...Array(3)].map((_, i) => (
+          <Card key={i} className="animate-pulse duration-1500">
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <div className="h-4 bg-gray-400 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-400 rounded w-full"></div>
+                <div className="h-3 bg-gray-400 rounded w-2/3"></div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )
+  }
 
-    if (filter === "all") return matchesSearch
-    if (filter === "breaking") return matchesSearch && article.breaking
-    if (filter === "political")
-      return matchesSearch && article.category === "political"
-    if (filter === "earnings")
-      return matchesSearch && article.category === "earnings"
-
-    return matchesSearch
-  })
+  if (news.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        No articles found matching your criteria.
+      </div>
+    )
+  }
 
   return (
-    <div className="space-y-4">
-      {filteredArticles.map(article => (
+    <div className="space-y-4 transition-opacity duration-500">
+      {news.map((article, index) => (
         <Card
-          key={article.id}
+          key={`${article.source.id ?? article.source.name}-${index}`}
           className="hover:shadow-md transition-all duration-200"
         >
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              {/* Header */}
-              <div className="flex items-start justify-between">
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center space-x-2">
-                    {article.breaking && (
-                      <Badge className="bg-red-500 text-white animate-pulse">
-                        BREAKING
+          <CardContent className="p-6 relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-4 right-4"
+            >
+              <ExternalLink to={article.url} className="h-4 w-4" />
+            </Button>
+            <div className="w-full space-y-4 flex items-center">
+              {article.urlToImage && (
+                <Image
+                  src={article.urlToImage}
+                  alt={article.source.name}
+                  width={150}
+                  height={150}
+                  className="mr-4 object-cover"
+                />
+              )}
+              <div>
+                {/* Header */}
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center space-x-2">
+                      {article.breaking && (
+                        <Badge className="bg-red-500 text-white animate-pulse">
+                          BREAKING
+                        </Badge>
+                      )}
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "text-xs",
+                          getImpactColor(article.impact)
+                        )}
+                      >
+                        {article.impact.toUpperCase()} IMPACT
                       </Badge>
-                    )}
-                    <Badge
-                      variant="outline"
-                      className={cn("text-xs", getImpactColor(article.impact))}
-                    >
-                      {article.impact.toUpperCase()} IMPACT
-                    </Badge>
+                    </div>
+
+                    <h3 className="text-lg font-semibold leading-tight">
+                      {article.title}
+                    </h3>
+
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {article.description}
+                    </p>
                   </div>
+                </div>
+              </div>
+            </div>
 
-                  <h3 className="text-lg font-semibold leading-tight">
-                    {article.headline}
-                  </h3>
-
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {article.summary}
-                  </p>
+            {/* Metadata */}
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  <span>
+                    {article.source.name} • {article.publishedAt}
+                  </span>
                 </div>
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="ml-4 flex-shrink-0"
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "text-xs",
+                    getSentimentColor(article.sentiment)
+                  )}
                 >
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
+                  {getSentimentIcon(article.sentiment)}
+                  <span className="ml-1 capitalize">{article.sentiment}</span>
+                  <span className="ml-1">
+                    ({(article.sentimentScore * 100).toFixed(0)})
+                  </span>
+                </Badge>
               </div>
 
-              {/* Metadata */}
-              <div className="flex items-center justify-between pt-2 border-t border-border">
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    <span>
-                      {article.source} • {article.timestamp}
-                    </span>
-                  </div>
-
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      "text-xs",
-                      getSentimentColor(article.sentiment)
-                    )}
-                  >
-                    {getSentimentIcon(article.sentiment)}
-                    <span className="ml-1 capitalize">{article.sentiment}</span>
-                    <span className="ml-1">
-                      ({(article.sentimentScore * 100).toFixed(0)})
-                    </span>
-                  </Badge>
-                </div>
-
-                {/* Related Stocks */}
+              {/* Related Stocks */}
+              {article.relatedStocks && article.relatedStocks.length > 0 && (
                 <div className="flex items-center space-x-1">
-                  {article.relatedStocks.slice(0, 3).map(stock => (
-                    <Badge key={stock} variant="secondary" className="text-xs">
-                      {stock}
-                    </Badge>
-                  ))}
+                  {article.relatedStocks
+                    .slice(0, 3)
+                    .map((stock, stockIndex) => (
+                      <Badge
+                        key={`${stock}-${stockIndex}`}
+                        variant="secondary"
+                        className="text-xs"
+                      >
+                        {stock}
+                      </Badge>
+                    ))}
                   {article.relatedStocks.length > 3 && (
                     <Badge variant="secondary" className="text-xs">
                       +{article.relatedStocks.length - 3}
                     </Badge>
                   )}
                 </div>
-              </div>
+              )}
             </div>
           </CardContent>
         </Card>

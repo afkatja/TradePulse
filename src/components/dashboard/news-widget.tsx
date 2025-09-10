@@ -15,36 +15,6 @@ import { useContext } from "react"
 import { SidebarContext, Tab } from "../../contexts/sidebar-context"
 import { useNews } from "../../contexts/news-context"
 
-const mockNews = [
-  {
-    id: "1",
-    headline: "Fed Signals Potential Rate Cuts in Q2",
-    source: "Reuters",
-    timestamp: "2 hours ago",
-    sentiment: "bullish" as const,
-    sentimentScore: 0.75,
-    impact: "high",
-  },
-  {
-    id: "2",
-    headline: "Tech Earnings Season Shows Mixed Results",
-    source: "Bloomberg",
-    timestamp: "4 hours ago",
-    sentiment: "neutral" as const,
-    sentimentScore: 0.05,
-    impact: "medium",
-  },
-  {
-    id: "3",
-    headline: "Oil Prices Surge on Supply Concerns",
-    source: "CNBC",
-    timestamp: "6 hours ago",
-    sentiment: "bearish" as const,
-    sentimentScore: -0.45,
-    impact: "medium",
-  },
-]
-
 export function NewsWidget() {
   const { setActiveTab } = useContext(SidebarContext)
   const getSentimentIcon = (sentiment: string) => {
@@ -91,7 +61,7 @@ export function NewsWidget() {
       <CardContent className="space-y-4">
         {news.map(article => (
           <div
-            key={article.source.id}
+            key={article.source.id ?? article.source.name}
             className="space-y-2 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
           >
             <div className="flex items-start justify-between">

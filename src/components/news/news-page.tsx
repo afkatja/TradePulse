@@ -1,26 +1,32 @@
 "use client"
 
-import { useState } from "react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SentimentOverview } from "./sentiment-overview"
 import { NewsFeed } from "./news-feed"
 import { PoliticalTracker } from "./political-tracker"
-import { Search, Filter, Newspaper } from "lucide-react"
+import { Search, Filter } from "lucide-react"
+import { useNews } from "../../contexts/news-context"
+
+interface Category {
+  id: string
+  label: string
+  icon: string
+}
+
+const categoriesMap: Record<string, Category> = {
+  all: { id: "all", label: "All News", icon: "📰" },
+  business: { id: "business", label: "Business", icon: "🚨" },
+  general: { id: "general", label: "General", icon: "🏛️" },
+  health: { id: "health", label: "Health", icon: "💰" },
+  technology: { id: "technology", label: "Technology", icon: "💻" },
+  science: { id: "science", label: "Science", icon: "📈" },
+}
 
 export function NewsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedFilter, setSelectedFilter] = useState("all")
-
+  const { currentCategory, setCategory, query, setQueryWithCategoryReset } =
+    useNews()
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -41,8 +47,8 @@ export function NewsPage() {
               <Input
                 type="text"
                 placeholder="Search news..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                value={query}
+                onChange={e => setQueryWithCategoryReset(e.target.value)}
                 className="pl-10 w-64"
               />
             </div>
@@ -57,28 +63,32 @@ export function NewsPage() {
       <SentimentOverview />
 
       {/* News Content */}
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">All News</TabsTrigger>
-          <TabsTrigger value="breaking">Breaking</TabsTrigger>
-          <TabsTrigger value="political">Political</TabsTrigger>
-          <TabsTrigger value="earnings">Earnings</TabsTrigger>
+      <Tabs
+        value={currentCategory}
+        defaultValue={categoriesMap.all.id}
+        className="w-full"
+      >
+        <TabsList
+          className={`grid w-full`}
+          style={{
+            gridTemplateColumns: `repeat(${
+              Object.keys(categoriesMap).length
+            }, minmax(0, 1fr))`,
+          }}
+        >
+          {Object.entries(categoriesMap).map(([key, category]) => (
+            <TabsTrigger
+              key={key}
+              value={category.id}
+              onClick={() => setCategory(category.id)}
+            >
+              {category.icon} {category.label}
+            </TabsTrigger>
+          ))}
         </TabsList>
 
-        <TabsContent value="all" className="space-y-4">
-          <NewsFeed filter="all" searchQuery={searchQuery} />
-        </TabsContent>
-
-        <TabsContent value="breaking" className="space-y-4">
-          <NewsFeed filter="breaking" searchQuery={searchQuery} />
-        </TabsContent>
-
-        <TabsContent value="political" className="space-y-4">
-          <PoliticalTracker />
-        </TabsContent>
-
-        <TabsContent value="earnings" className="space-y-4">
-          <NewsFeed filter="earnings" searchQuery={searchQuery} />
+        <TabsContent value={currentCategory} className="space-y-4">
+          <NewsFeed />
         </TabsContent>
       </Tabs>
     </div>
