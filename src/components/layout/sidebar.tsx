@@ -1,10 +1,21 @@
-"use client"
+import React, { useState, useContext } from "react"
 
-import { useContext } from "react"
-import { cn } from "@/lib/utils"
+// Utility function to combine class names
+const cn = (...classes: (string | undefined | null | boolean)[]) => {
+  return classes.filter(Boolean).join(" ")
+}
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
 import {
   BarChart3,
   TrendingUp,
@@ -15,15 +26,34 @@ import {
   Activity,
   PanelLeftClose,
   PanelLeftOpen,
+  MessageCircle,
+  Send,
+  Maximize2,
+  X,
 } from "lucide-react"
 import { SidebarContext, Tab } from "../../contexts/sidebar-context"
+import { ChatMessage } from "../../app/types"
+import ChatMessages from "../chat/messages"
+import QuickChatInput from "../chat/quickInput"
+import ChatDialog from "../chat/chatDialog"
+import Chat from "../chat/chat"
+
+const Tab = {
+  Dashboard: "dashboard",
+  Markets: "markets",
+  News: "news",
+  Portfolio: "portfolio",
+  Alerts: "alerts",
+  Settings: "settings",
+  Chat: "chat",
+}
 
 interface SidebarProps {
   isOpen: boolean
   onToggle: () => void
 }
 
-const navigationItems: Record<Tab, { id: Tab; label: string; icon: any }> = {
+const navigationItems = {
   [Tab.Dashboard]: {
     id: Tab.Dashboard,
     label: "Dashboard",
@@ -60,13 +90,13 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const { activeTab, setActiveTab } = useContext(SidebarContext)
 
   return (
-    <div
-      className={cn(
-        "bg-card border-r border-border transition-all duration-300 ease-in-out",
-        isOpen ? "w-64" : "w-16"
-      )}
-    >
-      <div className="flex h-full flex-col">
+    <>
+      <div
+        className={cn(
+          "bg-card border-r border-border transition-all duration-300 ease-in-out flex flex-col",
+          isOpen ? "w-64" : "w-16"
+        )}
+      >
         {/* Header */}
         <div className="flex h-16 items-center justify-between px-4 border-b border-border">
           {isOpen && (
@@ -107,7 +137,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                     !isOpen && "justify-center px-2",
                     isActive && "bg-primary text-primary-foreground shadow-md"
                   )}
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => setActiveTab(item.id as Tab)}
                 >
                   <Icon className={cn("h-5 w-5", isOpen && "mr-3")} />
                   {isOpen && <span className="truncate">{item.label}</span>}
@@ -116,8 +146,8 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
             })}
           </nav>
         </ScrollArea>
-
-        {/* Footer */}
+        <Chat isOpen={isOpen} />
+        {/* Market Status Footer */}
         {isOpen && (
           <>
             <Separator />
@@ -135,6 +165,6 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           </>
         )}
       </div>
-    </div>
+    </>
   )
 }

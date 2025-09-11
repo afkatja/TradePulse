@@ -46,6 +46,8 @@
 
   --radius: 0.75rem;
 
+  --font-size: 1rem;
+
   /* Financial gradients */
   --gradient-primary: linear-gradient(
     135deg,
@@ -244,6 +246,30 @@
 /* Custom scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
+}
+
+@layer chat {
+  .chat h3 {
+    font-size: calc(var(--font-size) * 1.25);
+    margin: calc(var(--font-size) * 0.5) 0;
+    font-weight: 700;
+  }
+  .chat p {
+    margin-bottom: calc(var(--font-size) * 0.5);
+  }
+  .chat p:last-child {
+    margin-bottom: 0;
+  }
+  .chat ol {
+    padding-left: calc(var(--font-size) * 0.7);
+    margin-left: calc(var(--font-size) * 0.5);
+    list-style: decimal;
+  }
+  .chat ul {
+    padding-left: calc(var(--font-size) * 0.7);
+    margin-left: calc(var(--font-size) * 0.5);
+    list-style: disc;
+  }
 }
 /* 
 .custom-scrollbar::-webkit-scrollbar-track {
