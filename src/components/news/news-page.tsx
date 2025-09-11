@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SentimentOverview } from "./sentiment-overview"
 import { NewsFeed } from "./news-feed"
-import { PoliticalTracker } from "./political-tracker"
+// import { PoliticalTracker } from "./political-tracker"
 import { Search, Filter } from "lucide-react"
 import { useNews } from "../../contexts/news-context"
 
