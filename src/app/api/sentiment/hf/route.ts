@@ -16,6 +16,9 @@ export async function POST(req: Request) {
   )
 
   const result = await response.json()
+  // console.log(result)
 
-  return NextResponse.json(result[0][0])
+  const top = result[0].reduce((a: any, b: any) => (b.score > a.score ? b : a))
+
+  return NextResponse.json({ label: top.label, score: top.score })
 }
